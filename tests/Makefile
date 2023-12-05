@@ -14,7 +14,7 @@
 CPP         = g++      # C++ Compuler
 
 # compiler flags -g debug, -O2 optimized version -c create a library object
-CPPFLAGS    = -O3
+CPPFLAGS    = -g -O0
 
 # The directory where the include files needed to create the library objects are
 INC_DIR = ../include
@@ -22,6 +22,22 @@ INC_DIR = ../include
 # The bin directory to put exes
 BIN_DIR = ../bin
 
+ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary
 
-simple_test: simple_test.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
-	$(CPP) simple_test.cpp -o $(BIN_DIR)/simple_test -I$(INC_DIR)
+test_simple: test_simple.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
+	$(CPP) $(CPPFLAGS) test_simple.cpp -o $(BIN_DIR)/test_simple -I$(INC_DIR)
+
+test_simple_valgrind: test_simple
+	valgrind --leak-check=yes ../bin/test_simple
+
+test_walled_boundary: test_walled_boundary.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
+	$(CPP) $(CPPFLAGS) test_walled_boundary.cpp -o $(BIN_DIR)/test_walled_boundary -I$(INC_DIR)
+
+test_none_boundary: test_none_boundary.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
+	$(CPP) $(CPPFLAGS) test_none_boundary.cpp -o $(BIN_DIR)/test_none_boundary -I$(INC_DIR)
+
+test_periodic_boundary: test_periodic_boundary.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
+	$(CPP) $(CPPFLAGS) test_periodic_boundary.cpp -o $(BIN_DIR)/test_periodic_boundary -I$(INC_DIR)
+
+
+make all: $(ALLTESTS)

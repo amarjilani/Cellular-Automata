@@ -19,6 +19,7 @@ void basic_update(MyCA& ca) {
         sum += n->getState();
       }
 
+      // Limit the state to 100
       if (sum > 100) {
         sum = 100;
       }
@@ -32,23 +33,6 @@ std::function<void(MyCA&)> update_func = basic_update;
 
 int main() {
   Boundary boundary_type = none;
-
-  // test we can make a cell
-  MyCell c;
-
-  // print state
-  std::cout << c.getState() << std::endl;
-
-  // put next state
-  c.setNextState(2);
-  // print state
-  std::cout << c.getState() << std::endl;
-
-  // actually call updaet
-  c.update();
-
-  // print state
-  std::cout << c.getState() << std::endl;
 
   // Make a CA with 10, 10 grid, no boundary stuff, basic update function
   // that sums all states in neighborhood
