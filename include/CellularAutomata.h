@@ -63,7 +63,7 @@ class CA {
    * *******************/
 
   // Cell indexing
-  inline std::shared_ptr<CellType> getCell(const int x, const int y) const {
+  inline std::shared_ptr<CellType> getCell(const int x, const int y) {
     return grid_.at(x).at(y);
   }
 
@@ -91,7 +91,7 @@ class CA {
   std::shared_ptr<CellType> getRelativeCell(const int x,
                                             const int y,
                                             const int Dx,
-                                            const int Dy) const {
+                                            const int Dy) {
     int newx = x + Dx;
     int newy = y + Dy;
 
@@ -114,7 +114,7 @@ class CA {
 
   // Moore Neighborhood (includes diagonals)
   std::vector<std::shared_ptr<CellType>>
-  getMooreNeighborhood(const int x, const int y, const int radius = 1) const {
+  getMooreNeighborhood(const int x, const int y, const int radius = 1) {
     std::vector<std::shared_ptr<CellType>> neighbors;
 
     // Can anticipate the number of neighbors by the radius
@@ -149,7 +149,7 @@ class CA {
   }
 
   std::vector<std::shared_ptr<CellType>>
-  getVNNeighborhood(const int x, const int y, const int radius = 1) const {
+  getVNNeighborhood(const int x, const int y, const int radius = 1) {
     // First get the Moore neighborhood with radius -1
     auto neighbors = getMooreNeighborhood(x, y, radius - 1);
 
