@@ -15,15 +15,16 @@ class Cell {
   StateType next_state_;
 
  public:
-  Cell(){current_state_=0;}
+  void setVoidState(){}
+  void setDefaultState(){}
+  
+  Cell(){setVoidState();}
   Cell(StateType initial_state) : current_state_(initial_state) {}
 
   // State interface
   StateType getState() { return current_state_; }
 
-  void defaultSetState() {
-    current_state_ = 1;
-    }
+
   void setNextState(StateType new_state) {
         next_state_ = new_state; 
     }
@@ -98,8 +99,13 @@ class CarCell : public Cell<int> {
             return model_;
         }
 
-        // Set state default function. Sets the current cell to constant (Driving)
-        void defaultSetState() {
+        // Set state default function. Sets the current cell to 1 (Driving)
+        void setDefaultState() {
             current_state_ = 1; 
+        }
+
+        // Set state void function. Sets the current cell to 0 (Stopped)
+        void setVoidState() {
+            current_state_ = 0;
         }
 };

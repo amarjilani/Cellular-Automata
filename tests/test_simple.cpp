@@ -41,6 +41,9 @@ int main() {
   //  constructor will make cell 1,1 start at 1, otherwise the cells
   //  will all be 0
   MyCA ca(10, 10, boundary_type);
+  auto cell = ca.getCell(4, 4);
+  cell -> setNextState(1);
+  cell -> update();
 
   // print out cell states
   ca.print();
