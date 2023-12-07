@@ -22,7 +22,7 @@ INC_DIR = ../include
 # The bin directory to put exes
 BIN_DIR = ../bin
 
-ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary
+ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary test_csv
 
 test_simple: test_simple.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
 	$(CPP) $(CPPFLAGS) test_simple.cpp -o $(BIN_DIR)/test_simple -I$(INC_DIR)
@@ -38,6 +38,9 @@ test_none_boundary: test_none_boundary.cpp $(INC_DIR)/Cell.h $(INC_DIR)/Cellular
 
 test_periodic_boundary: test_periodic_boundary.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
 	$(CPP) $(CPPFLAGS) test_periodic_boundary.cpp -o $(BIN_DIR)/test_periodic_boundary -I$(INC_DIR)
+
+test_csv: test_csv.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
+	$(CPP) $(CPPFLAGS) test_csv.cpp -o $(BIN_DIR)/test_csv -I$(INC_DIR)
 
 
 make all: $(ALLTESTS)
