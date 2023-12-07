@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Cell.h"
+#include "myrandom.h"
 
 // Define the allowed types of boundaries
 enum Boundary { walled, periodic, none };
@@ -61,6 +62,21 @@ class CA {
    * Methods for Getting
    * and indexing Cells
    * *******************/
+
+  // Initialization function that iterates through every
+  // cell and changes it to its "default" initialization state
+  // with a given probability probd
+  void randomInit(double prob) {
+    for (int x = 0; x < x_size_; x++) {
+      for (int y = 0; y < y_size_; y++) {
+        double rand = random_double(0, 1);
+        // std::cout << "Rand is: " << rand << std::endl;
+        if (rand < prob) {
+            getCell(x, y)->defaultSetState();
+        }
+      }
+    }
+  }
 
   // Cell indexing
   inline std::shared_ptr<CellType> getCell(int x, int y) {
