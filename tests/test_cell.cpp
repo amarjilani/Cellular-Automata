@@ -26,11 +26,33 @@ int main() {
   for (int i = 0; i < ca1.getX(); i++) {
     for (int j = 0; j < ca1.getY(); j++) {
       auto cellPtr = ca1.getCell(i, j);
-      if ( ! cellPtr->isRoad() ) {
+      if ( ! cellPtr->road() ) {
         std::cout << "Cell at (" << i << ", " << j << ") is a car with velocity ";
         std::cout << cellPtr->velocity() << std::endl;; 
       }
     }
+  }
+
+  std::cout << std::endl;
+
+  // Get first cell and make it a driving car
+  auto cellPtr = ca1.getCell(0, 0);
+  cellPtr -> setNextState(1);
+  cellPtr -> update();
+  cellPtr -> makeFlat();
+  ca1.print();
+
+  std::cout << std::endl;
+  cellPtr -> flatCountDecrement();
+  cellPtr -> flatCountDecrement();
+  cellPtr -> flatCountDecrement();
+  ca1.print();
+
+  try {
+    cellPtr -> flatCountDecrement();
+  }
+  catch (std::invalid_argument) {
+    std::cout << "Decrementing non flat tire errored properly" << std::endl;
   }
 
   return 0;
