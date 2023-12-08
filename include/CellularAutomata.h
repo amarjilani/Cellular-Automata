@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -9,6 +10,7 @@
 #include <vector>
 
 #include "Cell.h"
+#include "myrandom.h"
 
 // Define the allowed types of boundaries
 enum Boundary { walled, periodic, none };
@@ -30,11 +32,13 @@ class CA {
   const int x_size_;
   const int y_size_;
   std::vector<std::vector<std::shared_ptr<CellType>>> grid_;
-  const Boundary boundary_;
+  Boundary boundary_;
+  bool csv_output_ = false;
+  std::string csv_filename_;
 
  public:
-  // Basic constructor
-  CA(const int x_size, const int y_size, const Boundary boundary_type)
+  // Basic constructor, initializes each cell to the "void" state
+  CA(int x_size, int y_size, Boundary boundary_type)
       : x_size_(x_size), y_size_(y_size), boundary_(boundary_type) {
     // Grid init
     grid_.reserve(x_size_);
@@ -42,16 +46,29 @@ class CA {
       std::vector<std::shared_ptr<CellType>> row;
       row.reserve(y_size_);
       for (int y = 0; y < y_size_; y++) {
-        row.push_back(std::make_shared<CellType>(0));
+        // auto cell = std::make_shared<CellType>();
+        // cell -> setVoidState();
+        // row.push_back(cell);
+        row.push_back(std::make_shared<CellType>());
       }
       grid_.push_back(row);
     }
-
-    // for now, lets just set the point 1, 1 to have a state of 1 since that
-    // would work for bool, int, float
-    getCell(4, 4)->setNextState(1);
-    getCell(4, 4)->update();
   }
+
+  // // Constructor that also takes in an initial state for all cells
+  // CA(int x_size, int y_size, Boundary boundary_type, StateType state)
+  //     : x_size_(x_size), y_size_(y_size), boundary_(boundary_type) {
+  //   // Grid init
+  //   grid_.reserve(x_size_);
+  //   for (int x = 0; x < x_size_; x++) {
+  //     std::vector<std::shared_ptr<CellType>> row;
+  //     row.reserve(y_size_);
+  //     for (int y = 0; y < y_size_; y++) {
+  //       row.push_back(std::make_shared<CellType>(state));
+  //     }
+  //     grid_.push_back(row);
+  //   }
+  // }
 
   inline int getX() { return x_size_; }
 
@@ -61,6 +78,21 @@ class CA {
    * Methods for Getting
    * and indexing Cells
    * *******************/
+
+  // Initialization function that iterates through every
+  // cell and changes it to its "default" initialization state
+  // with a given probability probd
+  void randomInit(double prob) {
+    for (int x = 0; x < x_size_; x++) {
+      for (int y = 0; y < y_size_; y++) {
+        double rand = random_double(0, 1);
+        // std::cout << "Rand is: " << rand << std::endl;
+        if (rand < prob) {
+          getCell(x, y)->setDefaultState();
+        }
+      }
+    }
+  }
 
   // Cell indexing
   inline std::shared_ptr<CellType> getCell(const int x, const int y) {
@@ -203,6 +235,8 @@ class CA {
       // Once we have computed the new
       // states, push all changes
       updateAll();
+      if (csv_output_)
+        writeToCSV();
     }
   }
 
@@ -219,5 +253,38 @@ class CA {
       std::cout << std::endl;
     }
     std::cout << std::endl;
+  }
+
+  void enableCSV(std::string filename) {
+    csv_output_ = true;
+    csv_filename_ = filename;
+    std::ofstream file(csv_filename_, std::ofstream::trunc);
+
+    if (file.is_open()) {
+      file << x_size_ << ',' << y_size_ << std::endl;
+    } else {
+      std::cerr << "Unable to open file for writing headers: " << csv_filename_
+                << std::endl;
+    }
+  }
+
+  void disableCSV() { csv_output_ = false; }
+
+  void writeToCSV() {
+    std::ofstream file(csv_filename_, std::ofstream::app);
+    if (file.is_open()) {
+      for (int x = 0; x < x_size_; x++) {
+        for (int y = 0; y < y_size_; y++) {
+          file << getCell(x, y)->getState();
+          if (y < y_size_ - 1)
+            file << ",";
+        }
+        file << std::endl;
+      }
+      file << std::endl;
+    } else {
+      std::cerr << "Unable to open file for appending data: " << csv_filename_
+                << std::endl;
+    }
   }
 };

@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 /**
  * @brief Cell baseclass.
@@ -10,16 +11,20 @@
  */
 template <typename StateType>
 class Cell {
- private:
+ protected:
   StateType current_state_;
   StateType next_state_;
 
  public:
-  Cell() { current_state_ = 0; }
-  Cell(const StateType initial_state) : current_state_(initial_state) {}
+  void setVoidState() {}
+  void setDefaultState() {}
+
+  Cell() { setVoidState(); }
+  Cell(StateType initial_state) : current_state_(initial_state) {}
 
   // State interface
-  StateType getState() const { return current_state_; }
+  StateType getState() { return current_state_; }
+
   void setNextState(StateType new_state) { next_state_ = new_state; }
   void update() { current_state_ = next_state_; }
 };

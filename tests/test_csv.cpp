@@ -1,3 +1,6 @@
+/*
+Simple test of CSV output functionality
+*/
 #include <iostream>
 
 #include "CellularAutomata.h"
@@ -34,37 +37,23 @@ std::function<void(MyCA&)> update_func = basic_update;
 int main() {
   Boundary boundary_type = none;
 
-  // Make a CA with 10, 10 grid, no boundary stuff, basic update function
-  // that sums all states in neighborhood
-  //
-  //
-  //  constructor will make cell 1,1 start at 1, otherwise the cells
-  //  will all be 0
   MyCA ca(10, 10, boundary_type);
-  auto cell = ca.getCell(4, 4);
-  cell -> setNextState(1);
-  cell -> update();
 
-  // print out cell states
-  ca.print();
+  // enables writing to output 
+  ca.enableCSV("test.csv"); 
 
-  // run 1 iteration
-  ca.run(1, update_func);
+  // run for 10 iterations 
+  for (int i = 0; i < 10; i++) {
+    ca.run(1, update_func); 
+  }
 
-  // print out cell states
-  ca.print();
+  // test disable functionality 
+  ca.disableCSV();
 
-  // run 1 more iterations
-  ca.run(1, update_func);
-
-  // print out cell states
-  ca.print();
-
-  // run 10 more iterations
-  ca.run(3, update_func);
-
-  // print out cell states
-  ca.print();
+  // should not appear in the csv file 
+  for (int i = 0; i < 10; i++) {
+    ca.run(1, update_func); 
+  }
 
   return 0;
 }
