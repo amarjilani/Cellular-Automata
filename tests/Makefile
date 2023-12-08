@@ -1,17 +1,12 @@
 # Chem 274B: Software Engineering Fundamentals for
 #            Molecular Sciences
 #
-# Creator:  Tony Drummond, PhD.  Faculty
-# Date Created: September, 2022
-# Date Updated: September 22, 2023
+# Creator:  Patrick Neal, Cameron Hu, Aamar Jilani
 #
-# Directory Path: Assignment2/Source/Datatypes
-# This makefile creates objects and a library from OO Classes that
-# implement Data structures. Here is an example of archiving object
-# files (see DATA_OBJS) into a library object file (DATA_LIB)
+# Directory Path> 274B-Final/tests
 
 # GNU C++ Compiler
-CPP         = g++      # C++ Compuler
+CPP         = g++ -std=c++11      # C++ Compiler
 
 # compiler flags -g debug, -O2 optimized version -c create a library object
 CPPFLAGS    = -g -O0
@@ -22,7 +17,10 @@ INC_DIR = ../include
 # The bin directory to put exes
 BIN_DIR = ../bin
 
-ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary test_csv
+ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary test_csv test_cell
+=======
+# The Lib directory 
+LIB_DIR = ../lib
 
 test_simple: test_simple.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
 	$(CPP) $(CPPFLAGS) test_simple.cpp -o $(BIN_DIR)/test_simple -I$(INC_DIR)
@@ -42,5 +40,7 @@ test_periodic_boundary: test_periodic_boundary.cpp $(INC_DIR)/Cell.h $(INC_DIR)/
 test_csv: test_csv.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
 	$(CPP) $(CPPFLAGS) test_csv.cpp -o $(BIN_DIR)/test_csv -I$(INC_DIR)
 
+test_cell: test_cell.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
+	$(CPP) $(CPPFLAGS) test_cell.cpp -o $(BIN_DIR)/test_cell -I$(INC_DIR) -L$(LIB_DIR) -lmyrandom
 
 make all: $(ALLTESTS)
