@@ -7,6 +7,7 @@
 #include <numeric>
 #include <utility>
 #include <vector>
+#include <fstream>
 
 #include "Cell.h"
 #include "myrandom.h"
@@ -32,6 +33,8 @@ class CA {
   int y_size_;
   std::vector<std::vector<std::shared_ptr<CellType>>> grid_;
   Boundary boundary_;
+  bool csv_output_ = false;
+  std::string csv_filename_; 
 
  public:
   // Basic constructor, initializes each cell to the "void" state
@@ -230,6 +233,7 @@ class CA {
       // Once we have computed the new
       // states, push all changes
       updateAll();
+      if (csv_output_) writeToCSV(); 
     }
   }
 
@@ -247,4 +251,38 @@ class CA {
     }
     std::cout << std::endl;
   }
+
+  void enableCSV(std::string filename) {
+    csv_output_ = true; 
+    csv_filename_ = filename;
+    std::ofstream file(csv_filename_, std::ofstream::trunc);
+
+    if (file.is_open()) {
+        file << x_size_ << ',' << y_size_ << std::endl; 
+    } else {
+        std::cerr << "Unable to open file for writing headers: " << csv_filename_ << std::endl;
+    }
+}
+
+  void disableCSV() {
+    csv_output_ = false; 
+  }
+
+  void writeToCSV() {
+    std::ofstream file(csv_filename_, std::ofstream::app);
+    if (file.is_open()) {
+      for (int x = 0; x < x_size_; x++) {
+        for (int y = 0; y < y_size_; y++) {
+                file << getCell(x, y)->getState(); 
+                if (y < y_size_ - 1) file << ",";
+            }
+        file << std::endl;
+        }
+        file << std::endl;
+      } else {
+          std::cerr << "Unable to open file for appending data: " << csv_filename_ << std::endl;
+      }
+
+    }
+
 };
