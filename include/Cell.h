@@ -160,9 +160,7 @@ class CarCell : public Cell<int> {
 
             // If flatCount = 0, restore the car to a normal driving car
             if (flatCount_ == 0) {
-                flat_ = false;
-                velocity_ = 1;
-                current_state_ = 2;
+                setDefaultState();
             }
        }
 
