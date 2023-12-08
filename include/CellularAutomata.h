@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Cell.h"
+#include "myrandom.h"
 
 // Define the allowed types of boundaries
 enum Boundary { walled, periodic, none };
@@ -33,7 +34,7 @@ class CA {
   Boundary boundary_;
 
  public:
-  // Basic constructor
+  // Basic constructor, initializes each cell to the "void" state
   CA(int x_size, int y_size, Boundary boundary_type)
       : x_size_(x_size), y_size_(y_size), boundary_(boundary_type) {
     // Grid init
@@ -42,16 +43,29 @@ class CA {
       std::vector<std::shared_ptr<CellType>> row;
       row.reserve(y_size_);
       for (int y = 0; y < y_size_; y++) {
-        row.push_back(std::make_shared<CellType>(0));
+        // auto cell = std::make_shared<CellType>();
+        // cell -> setVoidState();
+        // row.push_back(cell);
+        row.push_back(std::make_shared<CellType>());
       }
       grid_.push_back(row);
     }
-
-    // for now, lets just set the point 1, 1 to have a state of 1 since that
-    // would work for bool, int, float
-    getCell(4, 4)->setNextState(1);
-    getCell(4, 4)->update();
   }
+
+  // // Constructor that also takes in an initial state for all cells
+  // CA(int x_size, int y_size, Boundary boundary_type, StateType state)
+  //     : x_size_(x_size), y_size_(y_size), boundary_(boundary_type) {
+  //   // Grid init
+  //   grid_.reserve(x_size_);
+  //   for (int x = 0; x < x_size_; x++) {
+  //     std::vector<std::shared_ptr<CellType>> row;
+  //     row.reserve(y_size_);
+  //     for (int y = 0; y < y_size_; y++) {
+  //       row.push_back(std::make_shared<CellType>(state));
+  //     }
+  //     grid_.push_back(row);
+  //   }
+  // }
 
   inline int getX() { return x_size_; }
 
@@ -61,6 +75,21 @@ class CA {
    * Methods for Getting
    * and indexing Cells
    * *******************/
+
+  // Initialization function that iterates through every
+  // cell and changes it to its "default" initialization state
+  // with a given probability probd
+  void randomInit(double prob) {
+    for (int x = 0; x < x_size_; x++) {
+      for (int y = 0; y < y_size_; y++) {
+        double rand = random_double(0, 1);
+        // std::cout << "Rand is: " << rand << std::endl;
+        if (rand < prob) {
+            getCell(x, y)->setDefaultState();
+        }
+      }
+    }
+  }
 
   // Cell indexing
   inline std::shared_ptr<CellType> getCell(int x, int y) {
