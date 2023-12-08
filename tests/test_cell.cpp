@@ -5,7 +5,7 @@
 int main() {
 
   CarCell c;
-  CarCell c1(1, 1);
+  CarCell c1(10);
 
 
   Boundary boundary_type = none;
@@ -22,6 +22,16 @@ int main() {
   prob = 0.1;
   ca1.randomInit(prob);
   ca1.print();
+
+  for (int i = 0; i < ca1.getX(); i++) {
+    for (int j = 0; j < ca1.getY(); j++) {
+      auto cellPtr = ca1.getCell(i, j);
+      if ( ! cellPtr->isRoad() ) {
+        std::cout << "Cell at (" << i << ", " << j << ") is a car with velocity ";
+        std::cout << cellPtr->velocity() << std::endl;; 
+      }
+    }
+  }
 
   return 0;
 }

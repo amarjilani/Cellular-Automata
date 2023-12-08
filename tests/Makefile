@@ -18,7 +18,7 @@ INC_DIR = ../include
 BIN_DIR = ../bin
 
 ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary test_csv test_cell
-=======
+
 # The Lib directory 
 LIB_DIR = ../lib
 
