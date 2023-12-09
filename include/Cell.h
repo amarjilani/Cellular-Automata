@@ -181,4 +181,8 @@ class CarCell : public Cell<int> {
             flat_ = false;
             flatCount_ = 0;
         }
+
+        void update() {
+            
+        }
 };
