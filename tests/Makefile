@@ -17,7 +17,7 @@ INC_DIR = ../include
 # The bin directory to put exes
 BIN_DIR = ../bin
 
-ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary test_csv test_cell
+ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary test_csv test_cell test_traffic
 
 # The Lib directory 
 LIB_DIR = ../lib
@@ -42,5 +42,8 @@ test_csv: test_csv.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
 
 test_cell: test_cell.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
 	$(CPP) $(CPPFLAGS) test_cell.cpp -o $(BIN_DIR)/test_cell -I$(INC_DIR) -L$(LIB_DIR) -lmyrandom
+
+test_traffic: test_traffic.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
+	$(CPP) $(CPPFLAGS) test_traffic.cpp -o $(BIN_DIR)/test_traffic -I$(INC_DIR) -L$(LIB_DIR) -lmyrandom
 
 make all: $(ALLTESTS)

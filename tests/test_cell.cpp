@@ -3,10 +3,8 @@
 #include "CellularAutomata.h"
 
 int main() {
-
   CarCell c;
   CarCell c1(10);
-
 
   Boundary boundary_type = none;
   CA<CarCell> ca(10, 10, none);
@@ -26,9 +24,11 @@ int main() {
   for (int i = 0; i < ca1.getX(); i++) {
     for (int j = 0; j < ca1.getY(); j++) {
       auto cellPtr = ca1.getCell(i, j);
-      if ( ! cellPtr->road() ) {
-        std::cout << "Cell at (" << i << ", " << j << ") is a car with velocity ";
-        std::cout << cellPtr->velocity() << std::endl;; 
+      if (!cellPtr->road()) {
+        std::cout << "Cell at (" << i << ", " << j
+                  << ") is a car with velocity ";
+        std::cout << cellPtr->velocity() << std::endl;
+        ;
       }
     }
   }
@@ -37,22 +37,19 @@ int main() {
 
   // Get first cell and make it a driving car
   auto cellPtr = ca1.getCell(0, 0);
-  // cellPtr -> setNextState(1);
-  // cellPtr -> update();
-  cellPtr -> setDefaultState();
-  cellPtr -> makeFlat();
+  cellPtr->setState(1);
+  cellPtr->makeFlat();
   ca1.print();
 
   std::cout << std::endl;
-  cellPtr -> flatCountDecrement();
-  cellPtr -> flatCountDecrement();
-  cellPtr -> flatCountDecrement();
+  cellPtr->flatCountDecrement();
+  cellPtr->flatCountDecrement();
+  cellPtr->flatCountDecrement();
   ca1.print();
 
   try {
-    cellPtr -> flatCountDecrement();
-  }
-  catch (std::invalid_argument) {
+    cellPtr->flatCountDecrement();
+  } catch (std::invalid_argument) {
     std::cout << "Decrementing non flat tire errored properly" << std::endl;
   }
 

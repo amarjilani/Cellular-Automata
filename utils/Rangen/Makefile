@@ -22,10 +22,10 @@ CPP         = g++
 CPPFLAGS    = -O3 -c    
 
 # The directory where the include files needed to create the library objects are
-INC_DIR = ../../Include
+INC_DIR = ../../include
 
 # The directory where the library object file will be moved to
-LIB_DIR = ../../Lib
+LIB_DIR = ../../lib
 
 # The next line contains the list of random generating utilities object 
 # files created with this Makefile 
