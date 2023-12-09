@@ -99,6 +99,11 @@ class CA {
     return grid_.at(x).at(y);
   }
 
+  inline const std::shared_ptr<CellType> getCell(const int x,
+                                                 const int y) const {
+    return grid_.at(x).at(y);
+  }
+
   inline bool insideBoundary(const int x, const int y) const {
     if (boundary_ == periodic) {
       return true;
