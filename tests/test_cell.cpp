@@ -37,8 +37,7 @@ int main() {
 
   // Get first cell and make it a driving car
   auto cellPtr = ca1.getCell(0, 0);
-  cellPtr->setNextState(1);
-  cellPtr->update();
+  cellPtr->setState(1);
   cellPtr->makeFlat();
   ca1.print();
 

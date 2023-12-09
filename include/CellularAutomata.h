@@ -239,7 +239,7 @@ class CA {
 
       // Once we have computed the new
       // states, push all changes
-      updateAll();
+      // updateAll();
       if (csv_output_)
         writeToCSV();
     }

@@ -30,7 +30,7 @@ void trafficUpdate(CA<CarCell>& ca) {
         // If we are allowed to move, set new cell
         if (dx > 0 && !cell->flat()) {
           auto next_cell = ca.getRelativeCell(x, y, dx, 0);
-          next_cell->road() = false;
+          next_cell->setDefaultState();
           next_cell->velocity() = cell->velocity();
 
           cell->setVoidState();
@@ -46,15 +46,32 @@ int main() {
   Boundary boundary_type = periodic;
 
   CA<CarCell> ca(100, 3, boundary_type);
+  // auto cellPtr = ca.getCell(0, 0);
+  // std::cout << cellPtr -> getState() << std::endl;
+  // std::cout << cellPtr -> road() << std::endl;
 
   // Set ~10% of cells to have cars
   ca.randomInit(0.1);
+
+  for (int i = 0; i < ca.getX(); i++) {
+    for (int j = 0; j < ca.getY(); j++) {
+      auto cellPtr = ca.getCell(i, j);
+      // if (!cellPtr->road()) {
+        std::cout << "Cell at (" << i << ", " << j;
+        std::cout << ") has state: " << cellPtr -> getState();
+        std::cout << std::endl;
+        // std::cout << " and road_: " << cellPtr -> road() << std::endl;
+      // }
+    }
+  }
 
   // Set the output
   ca.enableCSV("test_traffic.csv");
 
   // Run some iterations!
   ca.run(10, trafficUpdateFunc);
+
+  ca.writeToCSV();
 
   return 0;
 }

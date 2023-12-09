@@ -15,7 +15,6 @@ template <typename StateType>
 class Cell {
  protected:
   StateType current_state_;
-  StateType next_state_;
 
  public:
   void setVoidState() {}
@@ -27,8 +26,8 @@ class Cell {
   // State interface
   StateType getState() { return current_state_; }
 
-  void setNextState(StateType new_state) { next_state_ = new_state; }
-  void update() { current_state_ = next_state_; }
+  void setState(StateType new_state) { current_state_ = new_state; }
+  void update() {}
 };
 
 /**
@@ -49,13 +48,13 @@ class CarCell : public Cell<int> {
  private:
   int velocity_;
   int acc_;
-  bool road_;
-  bool flat_;
+  // bool road_;
+  // bool flat_;
   int flatCount_;
 
  public:
   // Default constructor
-  CarCell() : velocity_(0), acc_(0), road_(true), flat_(false), flatCount_(0) {
+  CarCell() : velocity_(0), acc_(0), flatCount_(0) {
     current_state_ = 0;
   }
 
@@ -63,8 +62,6 @@ class CarCell : public Cell<int> {
   CarCell(int velocity)
       : velocity_(velocity),
         acc_(0),
-        road_(false),
-        flat_(false),
         flatCount_(0) {
     current_state_ = 2;
   }
@@ -86,14 +83,20 @@ class CarCell : public Cell<int> {
   //     return model_;
   // }
 
-  // Road boolean getter/setter function
-  bool& road() { return road_; }
+  // // Road boolean getter/setter function
+  // bool& road() { return road_; }
+  bool road() const{
+    return (current_state_ == 0);
+  }
 
-  // Const Road boolean getter function
-  bool road() const { return road_; }
+  // // Const Road boolean getter function
+  // bool road() const { return road_; }
 
-  // Flat boolean getter/setter function
-  bool& flat() { return flat_; }
+  // // Flat boolean getter/setter function
+  // bool& flat() { return flat_; }
+  bool flat() {
+    return (current_state_ == 3);
+  }
 
   // FlatCount int getter/setter function
   int& flatCount() { return flatCount_; }
@@ -119,7 +122,7 @@ class CarCell : public Cell<int> {
 
     current_state_ = 3;
     velocity_ = 0;
-    flat_ = true;
+    // flat_ = true;
     flatCount_ = 3;
   }
 
@@ -135,7 +138,8 @@ class CarCell : public Cell<int> {
     }
 
     // Check that the car has a flatTire
-    if ((flat_ != true) || (current_state_ != 3)) {
+    // if ((flat_ != true) || (current_state_ != 3)) {
+    if (current_state_ != 3) {
       throw std::invalid_argument(
           "flatCountDecrement can only be called on a car with a flat tire");
     }
@@ -153,8 +157,8 @@ class CarCell : public Cell<int> {
   void setDefaultState() {
     current_state_ = 2;
     velocity_ = 1;
-    road_ = false;
-    flat_ = false;
+    // road_ = false;
+    // flat_ = false;
     flatCount_ = 0;
   }
 
@@ -162,8 +166,8 @@ class CarCell : public Cell<int> {
   void setVoidState() {
     current_state_ = 0;
     velocity_ = 0;
-    road_ = true;
-    flat_ = false;
+    // road_ = true;
+    // flat_ = false;
     flatCount_ = 0;
   }
 };
