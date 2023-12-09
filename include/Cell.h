@@ -94,7 +94,7 @@ class CarCell : public Cell<int> {
 
   // // Flat boolean getter/setter function
   // bool& flat() { return flat_; }
-  bool flat() {
+  bool flat() const {
     return (current_state_ == 3);
   }
 
