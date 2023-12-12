@@ -49,6 +49,8 @@ int main() {
   cellPtr->update();
   ca1.print();
 
+  cellPtr -> update();
+  ca1.print();
   try {
     cellPtr->flatCountDecrement();
   } catch (std::invalid_argument) {
