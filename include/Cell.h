@@ -15,6 +15,7 @@ template <typename StateType>
 class Cell {
  protected:
   StateType current_state_;
+  StateType next_state_;
 
  public:
   void setVoidState() {}
@@ -27,16 +28,19 @@ class Cell {
   StateType getState() { return current_state_; }
 
   void setState(StateType new_state) { current_state_ = new_state; }
-  void update() {}
+  void setNextState(StateType next_state) { next_state_ = next_state; }
+  void update() {
+    current_state_ = next_state_;
+  }
 };
 
 /**
  * @brief CarStates
  * Contains the possible states a CarCell
  * 0 = Road cell, no car. Everything = 0
- * 1 = Stopped means velocity = 0, no acceleration
- * 2 = Constant means no acceleration, constant velocity > 0
- * 3 = FlatTire means velocity, acceleration = 0, flatCount > 0
+ * 1 = Stopped means velocity = 0
+ * 2 = Constant means moving, constant velocity > 0
+ * 3 = FlatTire means velocity = 0, flatCount > 0
  */
 
 // enum CarStates {Stopped, Constant, Accelerating, Braking, OnFire};
@@ -47,41 +51,28 @@ class Cell {
 class CarCell : public Cell<int> {
  private:
   int velocity_;
-  int acc_;
-  // bool road_;
-  // bool flat_;
   int flatCount_;
+  int next_velocity_;
+  int next_flatCount_;
 
  public:
   // Default constructor
-  CarCell() : velocity_(0), acc_(0), flatCount_(0) {
+  CarCell() {
     current_state_ = 0;
   }
 
-  // Constructor that takes in velocity, acceleration
+  // Constructor that takes in velocity
   CarCell(int velocity)
       : velocity_(velocity),
-        acc_(0),
         flatCount_(0) {
     current_state_ = 2;
   }
 
-  // Getter/setter function for velocity
-  int& velocity() { return velocity_; }
+  // Getter/setter function for next velocity
+  int& next_velocity() { return next_velocity_; }
 
   // Const getter function for velocity
   int velocity() const { return velocity_; }
-
-  // Getter/setter function for acceleration
-  int& acceleration() { return acc_; }
-
-  // Const getter function for acceleration
-  int acceleration() const { return acc_; }
-
-  // Const getter function for model
-  // std::string model() const {
-  //     return model_;
-  // }
 
   // // Road boolean getter/setter function
   // bool& road() { return road_; }
@@ -98,12 +89,38 @@ class CarCell : public Cell<int> {
     return (current_state_ == 3);
   }
 
-  // FlatCount int getter/setter function
-  int& flatCount() { return flatCount_; }
+  // next_FlatCount int getter/setter function
+  int& next_flatCount() { return next_flatCount_; }
+
+  int flatCount() const { return flatCount_; }
+  // 
+
+  // Getter/setter function for acceleration
+  // int& acceleration() { return acc_; }
+
+  // Const getter function for acceleration
+  // int acceleration() const { return acc_; }
+
+  // Const getter function for model
+  // std::string model() const {
+  //     return model_;
+  // }
 
   /***********************
    * State Related Methods
    ************************/
+
+  /**
+   * Update Method: updates current_state_ to be the stored next_state 
+   * and updates the attributes of the CarCell based off
+   * the value of next_state_. If no next_state_ is defined, next_state_
+   * is always defaulted to be 0: road cell
+  */
+ void update() {
+  current_state_ = next_state_;
+  velocity_ = next_velocity_;
+  flatCount_ = next_flatCount_;
+ }
 
   /**
    * Method to give the car a flat tire
@@ -111,19 +128,18 @@ class CarCell : public Cell<int> {
    */
   void makeFlat() {
     // Check that there exists a car
-    if (current_state_ == 0) {
+    if (road()) {
       throw std::invalid_argument("No car exists at this cell!");
     }
 
     // Check that the car doesn't already have a flat
-    if (current_state_ == 3) {
+    if (flat()) {
       throw std::invalid_argument("Car already has a flat tire");
     }
 
-    current_state_ = 3;
-    velocity_ = 0;
-    // flat_ = true;
-    flatCount_ = 3;
+    next_state_ = 3;
+    next_velocity_ = 0;
+    next_flatCount_ = 3;
   }
 
   /**
@@ -133,41 +149,54 @@ class CarCell : public Cell<int> {
    */
   void flatCountDecrement() {
     // Check that there exists a car
-    if (current_state_ == 0) {
+    if (road()) {
       throw std::invalid_argument("No car exists at this cell!");
     }
 
     // Check that the car has a flatTire
     // if ((flat_ != true) || (current_state_ != 3)) {
-    if (current_state_ != 3) {
+    if (!flat()) {
       throw std::invalid_argument(
           "flatCountDecrement can only be called on a car with a flat tire");
     }
 
     // Decrement flatCount
-    flatCount_--;
+    next_flatCount_--;
 
-    // If flatCount = 0, restore the car to a normal driving car
-    if (flatCount_ == 0) {
-      setDefaultState();
+    // If flatCount = 0, restore the car to a normal driving car next turn
+    if (next_flatCount_ == 0) {
+      next_state_ = 2;
+      next_velocity_ = 1;
     }
   }
 
-  // Set state default function. Sets the current cell to 2 (Driving)
+  // Set state default function: set's the cell's current attributes. Sets the current cell to 2 (Driving)
   void setDefaultState() {
     current_state_ = 2;
     velocity_ = 1;
-    // road_ = false;
-    // flat_ = false;
     flatCount_ = 0;
   }
 
-  // Set state void function. Sets the current cell to 0 (Road cell)
+  // Sets the current cell's next state to be the Default state (driving)
+  void setNextDefaultState() {
+    next_state_ = 2;
+    next_velocity_ = 1;
+    next_flatCount_ = 0;
+  }
+
+  // Set state void function: set's the cell's current attributes. Sets the current cell to 0 (Road cell)
   void setVoidState() {
     current_state_ = 0;
     velocity_ = 0;
-    // road_ = true;
-    // flat_ = false;
     flatCount_ = 0;
   }
+
+  // Sets the current cell's next state to be the Void state (road)
+  void setNextVoidState() {
+    next_state_ = 0;
+    next_velocity_ = 0;
+    next_flatCount_ = 0;
+  }
+
+
 };

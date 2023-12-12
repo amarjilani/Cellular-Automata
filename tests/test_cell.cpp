@@ -39,12 +39,14 @@ int main() {
   auto cellPtr = ca1.getCell(0, 0);
   cellPtr->setState(1);
   cellPtr->makeFlat();
+  cellPtr->update();
   ca1.print();
 
   std::cout << std::endl;
   cellPtr->flatCountDecrement();
   cellPtr->flatCountDecrement();
   cellPtr->flatCountDecrement();
+  cellPtr->update();
   ca1.print();
 
   try {

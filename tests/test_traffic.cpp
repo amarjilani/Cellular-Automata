@@ -21,7 +21,7 @@ void trafficUpdate(CA<CarCell>& ca) {
           auto cell_in_front = ca.getRelativeCell(x, y, dx, 0);
 
           if (!cell_in_front->road()) {
-            cell->velocity() = cell_in_front->velocity();
+            cell->next_velocity() = cell_in_front->velocity();
             dx--;  // stop at the cell *before* this one
             break;
           }
@@ -30,10 +30,10 @@ void trafficUpdate(CA<CarCell>& ca) {
         // If we are allowed to move, set new cell
         if (dx > 0 && !cell->flat()) {
           auto next_cell = ca.getRelativeCell(x, y, dx, 0);
-          next_cell->setDefaultState();
-          next_cell->velocity() = cell->velocity();
+          next_cell->setNextDefaultState();
+          next_cell->next_velocity() = cell->velocity();
 
-          cell->setVoidState();
+          cell->setNextVoidState();
         }
       }
     }
@@ -44,6 +44,7 @@ std::function<void(CA<CarCell>&)> trafficUpdateFunc = trafficUpdate;
 
 int main() {
   Boundary boundary_type = periodic;
+  // Boundary boundary_type = walled;
 
   CA<CarCell> ca(100, 3, boundary_type);
   // auto cellPtr = ca.getCell(0, 0);
@@ -72,6 +73,8 @@ int main() {
   ca.run(10, trafficUpdateFunc);
 
   ca.writeToCSV();
+
+  ca.print();
 
   return 0;
 }
