@@ -38,17 +38,14 @@ class CA {
 
  public:
   // Basic constructor, initializes each cell to the "void" state
-  CA(int x_size, int y_size, Boundary boundary_type)
-      : x_size_(x_size), y_size_(y_size), boundary_(boundary_type) {
+  CA(int rows, int cols, Boundary boundary_type)
+      : x_size_(cols), y_size_(rows), boundary_(boundary_type) {
     // Grid init
-    grid_.reserve(x_size_);
-    for (int x = 0; x < x_size_; x++) {
+    grid_.reserve(y_size_);
+    for (int y = 0; y < y_size_; y++) {
       std::vector<std::shared_ptr<CellType>> row;
-      row.reserve(y_size_);
-      for (int y = 0; y < y_size_; y++) {
-        // auto cell = std::make_shared<CellType>();
-        // cell -> setVoidState();
-        // row.push_back(cell);
+      row.reserve(x_size_);
+      for (int x = 0; x < x_size_; x++) {
         row.push_back(std::make_shared<CellType>());
       }
       grid_.push_back(row);
@@ -74,6 +71,10 @@ class CA {
 
   inline int getY() { return y_size_; }
 
+  inline int getCols() { return x_size_; }
+
+  inline int getRows() { return y_size_; }
+
   /*******************
    * Methods for Getting
    * and indexing Cells
@@ -83,39 +84,39 @@ class CA {
   // cell and changes it to its "default" initialization state
   // with a given probability probd
   void randomInit(double prob) {
-    for (int x = 0; x < x_size_; x++) {
-      for (int y = 0; y < y_size_; y++) {
+    for (int y = 0; y < y_size_; y++) {
+      for (int x = 0; x < x_size_; x++) {
         double rand = random_double(0, 1);
-        // std::cout << "Rand is: " << rand << std::endl;
         if (rand < prob) {
-          getCell(x, y)->setDefaultState();
+          getCell(y, x)->setDefaultState();
         }
       }
     }
   }
 
   // Cell indexing
-  inline std::shared_ptr<CellType> getCell(const int x, const int y) {
-    return grid_.at(x).at(y);
+  inline std::shared_ptr<CellType> getCell(const int row, const int col) {
+    return grid_.at(row).at(col);
   }
 
-  inline const std::shared_ptr<CellType> getCell(const int x,
-                                                 const int y) const {
-    return grid_.at(x).at(y);
+  inline const std::shared_ptr<CellType> getCell(const int row,
+                                                 const int col) const {
+    return grid_.at(row).at(col);
   }
 
-  inline bool insideBoundary(const int x, const int y) const {
+  inline bool insideBoundary(const int row, const int col) const {
     if (boundary_ == periodic) {
       return true;
     }
-    return (x >= 0 && x < x_size_ && y >= 0 && y < y_size_);
+    return (col >= 0 && col < x_size_ && row >= 0 && row < y_size_);
   }
 
-  inline bool atBoundary(const int x, const int y) const {
+  inline bool atBoundary(const int row, const int col) const {
     if (boundary_ == periodic) {
       return false;
-    } else if ((x == x_size_ - 1 || x == 0 || y == 0 || y == y_size_ - 1) &&
-               insideBoundary(x, y)) {
+    } else if ((col == x_size_ - 1 || col == 0 || row == 0 ||
+                row == y_size_ - 1) &&
+               insideBoundary(row, col)) {
       return true;
     }
 
@@ -125,24 +126,24 @@ class CA {
   // not sure this is the best way,
   // but didn't want to have 4 separate logic functions
   // bc in my tinkering I kept forgetting to switch the - to + etc
-  std::shared_ptr<CellType> getRelativeCell(const int x,
-                                            const int y,
-                                            const int Dx,
-                                            const int Dy) {
-    int newx = x + Dx;
-    int newy = y + Dy;
+  std::shared_ptr<CellType> getRelativeCell(const int row,
+                                            const int col,
+                                            const int Drow,
+                                            const int Dcol) {
+    int newcol = col + Dcol;
+    int newrow = row + Drow;
 
     switch (boundary_) {
       case walled:
       case none:
-        if (insideBoundary(newx, newy)) {
-          return getCell(newx, newy);
+        if (insideBoundary(newrow, newcol)) {
+          return getCell(newrow, newcol);
         }
         break;
 
       case periodic:
-        return getCell(((newx % x_size_) + x_size_) % x_size_,
-                       ((newy % y_size_) + y_size_ % y_size_));
+        return getCell(((newrow % y_size_) + y_size_) % y_size_,
+                       ((newcol % x_size_) + x_size_ % x_size_));
         break;
     }
 
@@ -151,7 +152,7 @@ class CA {
 
   // Moore Neighborhood (includes diagonals)
   std::vector<std::shared_ptr<CellType>>
-  getMooreNeighborhood(const int x, const int y, const int radius = 1) {
+  getMooreNeighborhood(const int row, const int col, const int radius = 1) {
     std::vector<std::shared_ptr<CellType>> neighbors;
 
     // Can anticipate the number of neighbors by the radius
@@ -160,10 +161,10 @@ class CA {
     switch (boundary_) {
       case walled:
       case none:
-        // Sweep from x - radius -> x + radius
-        for (int i = x - radius; i < x + radius + 1; i++) {
-          // Sweep from y - radius -> y + radius
-          for (int j = y - radius; j < y + radius + 1; j++) {
+        // Sweep from y - radius -> y + radius
+        for (int i = row - radius; i < row + radius + 1; i++) {
+          // Sweep from x - radius -> x + radius
+          for (int j = col - radius; j < col + radius + 1; j++) {
             if (insideBoundary(i, j)) {
               neighbors.push_back(getCell(i, j));
             }
@@ -172,11 +173,11 @@ class CA {
         break;
 
       case periodic:
-        // Sweep from x - radius -> x + radius
+        // Sweep from y - radius -> y + radius
         for (int i = 0; i < radius + 1; i++) {
-          // Sweep from y - radius -> y + radius
+          // Sweep from x - radius -> x + radius
           for (int j = 0; j < radius + 1; j++) {
-            neighbors.push_back(getRelativeCell(x, y, i, j));
+            neighbors.push_back(getRelativeCell(row, col, i, j));
           }
         }
         break;
@@ -186,27 +187,27 @@ class CA {
   }
 
   std::vector<std::shared_ptr<CellType>>
-  getVNNeighborhood(const int x, const int y, const int radius = 1) {
+  getVNNeighborhood(const int row, const int col, const int radius = 1) {
     // First get the Moore neighborhood with radius -1
-    auto neighbors = getMooreNeighborhood(x, y, radius - 1);
+    auto neighbors = getMooreNeighborhood(row, col, radius - 1);
 
     // Then fill out the outer edges (not including diagonal)
-    auto right = getRelativeCell(x, y, radius, 0);
+    auto right = getRelativeCell(row, col, radius, 0);
     if (right != nullptr) {
       neighbors.push_back(right);
     }
 
-    auto left = getRelativeCell(x, y, -radius, 0);
+    auto left = getRelativeCell(row, col, -radius, 0);
     if (left != nullptr) {
       neighbors.push_back(left);
     }
 
-    auto up = getRelativeCell(x, y, 0, radius);
+    auto up = getRelativeCell(row, col, 0, radius);
     if (up != nullptr) {
       neighbors.push_back(up);
     }
 
-    auto down = getRelativeCell(x, y, 0, -radius);
+    auto down = getRelativeCell(row, col, 0, -radius);
     if (down != nullptr) {
       neighbors.push_back(down);
     }
@@ -219,9 +220,9 @@ class CA {
    *********************/
 
   void updateAll() {
-    for (int x = 0; x < x_size_; x++) {
-      for (int y = 0; y < y_size_; y++) {
-        getCell(x, y)->update();
+    for (int y = 0; y < y_size_; y++) {
+      for (int x = 0; x < x_size_; x++) {
+        getCell(y, x)->update();
       }
     }
   }
@@ -250,9 +251,9 @@ class CA {
    *********************/
 
   void print() const {
-    for (int x = 0; x < x_size_; x++) {
-      for (int y = 0; y < y_size_; y++) {
-        std::cout << std::left << std::setw(4) << getCell(x, y)->getState()
+    for (int y = 0; y < y_size_; y++) {
+      for (int x = 0; x < x_size_; x++) {
+        std::cout << std::left << std::setw(4) << getCell(y, x)->getState()
                   << " ";
       }
       std::cout << std::endl;
@@ -278,10 +279,10 @@ class CA {
   void writeToCSV() {
     std::ofstream file(csv_filename_, std::ofstream::app);
     if (file.is_open()) {
-      for (int x = 0; x < x_size_; x++) {
-        for (int y = 0; y < y_size_; y++) {
-          file << getCell(x, y)->getState();
-          if (y < y_size_ - 1)
+      for (int y = 0; y < y_size_; y++) {
+        for (int x = 0; x < x_size_; x++) {
+          file << getCell(y, x)->getState();
+          if (x < x_size_ - 1)
             file << ",";
         }
         file << std::endl;
