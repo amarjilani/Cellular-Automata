@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -7,7 +8,6 @@
 #include <numeric>
 #include <utility>
 #include <vector>
-#include <fstream>
 
 #include "Cell.h"
 #include "myrandom.h"
@@ -29,12 +29,12 @@ enum Boundary { walled, periodic, none };
 template <typename CellType>
 class CA {
  private:
-  int x_size_;
-  int y_size_;
+  const int x_size_;
+  const int y_size_;
   std::vector<std::vector<std::shared_ptr<CellType>>> grid_;
   Boundary boundary_;
   bool csv_output_ = false;
-  std::string csv_filename_; 
+  std::string csv_filename_;
 
  public:
   // Basic constructor, initializes each cell to the "void" state
@@ -88,25 +88,30 @@ class CA {
         double rand = random_double(0, 1);
         // std::cout << "Rand is: " << rand << std::endl;
         if (rand < prob) {
-            getCell(x, y)->setDefaultState();
+          getCell(x, y)->setDefaultState();
         }
       }
     }
   }
 
   // Cell indexing
-  inline std::shared_ptr<CellType> getCell(int x, int y) {
+  inline std::shared_ptr<CellType> getCell(const int x, const int y) {
     return grid_.at(x).at(y);
   }
 
-  inline bool insideBoundary(int x, int y) {
+  inline const std::shared_ptr<CellType> getCell(const int x,
+                                                 const int y) const {
+    return grid_.at(x).at(y);
+  }
+
+  inline bool insideBoundary(const int x, const int y) const {
     if (boundary_ == periodic) {
       return true;
     }
     return (x >= 0 && x < x_size_ && y >= 0 && y < y_size_);
   }
 
-  inline bool atBoundary(int x, int y) {
+  inline bool atBoundary(const int x, const int y) const {
     if (boundary_ == periodic) {
       return false;
     } else if ((x == x_size_ - 1 || x == 0 || y == 0 || y == y_size_ - 1) &&
@@ -120,7 +125,10 @@ class CA {
   // not sure this is the best way,
   // but didn't want to have 4 separate logic functions
   // bc in my tinkering I kept forgetting to switch the - to + etc
-  std::shared_ptr<CellType> getRelativeCell(int x, int y, int Dx, int Dy) {
+  std::shared_ptr<CellType> getRelativeCell(const int x,
+                                            const int y,
+                                            const int Dx,
+                                            const int Dy) {
     int newx = x + Dx;
     int newy = y + Dy;
 
@@ -142,9 +150,8 @@ class CA {
   }
 
   // Moore Neighborhood (includes diagonals)
-  std::vector<std::shared_ptr<CellType>> getMooreNeighborhood(int x,
-                                                              int y,
-                                                              int radius = 1) {
+  std::vector<std::shared_ptr<CellType>>
+  getMooreNeighborhood(const int x, const int y, const int radius = 1) {
     std::vector<std::shared_ptr<CellType>> neighbors;
 
     // Can anticipate the number of neighbors by the radius
@@ -178,9 +185,8 @@ class CA {
     return neighbors;
   }
 
-  std::vector<std::shared_ptr<CellType>> getVNNeighborhood(int x,
-                                                           int y,
-                                                           int radius = 1) {
+  std::vector<std::shared_ptr<CellType>>
+  getVNNeighborhood(const int x, const int y, const int radius = 1) {
     // First get the Moore neighborhood with radius -1
     auto neighbors = getMooreNeighborhood(x, y, radius - 1);
 
@@ -220,7 +226,8 @@ class CA {
     }
   }
 
-  void run(int iterations, std::function<void(CA<CellType>&)> update_func) {
+  void run(const int iterations,
+           const std::function<void(CA<CellType>&)> update_func) {
     // For i iterations
     for (int i = 0; i < iterations; i++) {
       // Call our update_func_
@@ -233,7 +240,8 @@ class CA {
       // Once we have computed the new
       // states, push all changes
       updateAll();
-      if (csv_output_) writeToCSV(); 
+      if (csv_output_)
+        writeToCSV();
     }
   }
 
@@ -241,7 +249,7 @@ class CA {
    *   Printing State
    *********************/
 
-  void print() {
+  void print() const {
     for (int x = 0; x < x_size_; x++) {
       for (int y = 0; y < y_size_; y++) {
         std::cout << std::left << std::setw(4) << getCell(x, y)->getState()
@@ -253,36 +261,35 @@ class CA {
   }
 
   void enableCSV(std::string filename) {
-    csv_output_ = true; 
+    csv_output_ = true;
     csv_filename_ = filename;
     std::ofstream file(csv_filename_, std::ofstream::trunc);
 
     if (file.is_open()) {
-        file << x_size_ << ',' << y_size_ << std::endl; 
+      file << x_size_ << ',' << y_size_ << std::endl;
     } else {
-        std::cerr << "Unable to open file for writing headers: " << csv_filename_ << std::endl;
+      std::cerr << "Unable to open file for writing headers: " << csv_filename_
+                << std::endl;
     }
-}
-
-  void disableCSV() {
-    csv_output_ = false; 
   }
+
+  void disableCSV() { csv_output_ = false; }
 
   void writeToCSV() {
     std::ofstream file(csv_filename_, std::ofstream::app);
     if (file.is_open()) {
       for (int x = 0; x < x_size_; x++) {
         for (int y = 0; y < y_size_; y++) {
-                file << getCell(x, y)->getState(); 
-                if (y < y_size_ - 1) file << ",";
-            }
-        file << std::endl;
+          file << getCell(x, y)->getState();
+          if (y < y_size_ - 1)
+            file << ",";
         }
         file << std::endl;
-      } else {
-          std::cerr << "Unable to open file for appending data: " << csv_filename_ << std::endl;
       }
-
+      file << std::endl;
+    } else {
+      std::cerr << "Unable to open file for appending data: " << csv_filename_
+                << std::endl;
     }
-
+  }
 };
