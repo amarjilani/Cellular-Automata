@@ -17,7 +17,7 @@ void trafficUpdate(CA<CarCell>& ca) {
 
         // check how far in front we are allowed to move
         int dx;
-        for (dx = 1; dx <= cell->velocity(); dx++) {
+        for (dx = 1; dx < cell->velocity(); dx++) {
           auto cell_in_front = ca.getRelativeCell(x, y, dx, 0);
 
           if (!cell_in_front->road()) {
@@ -71,8 +71,6 @@ int main() {
 
   // Run some iterations!
   ca.run(10, trafficUpdateFunc);
-
-  ca.writeToCSV();
 
   ca.print();
 
