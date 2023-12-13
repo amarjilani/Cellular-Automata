@@ -40,10 +40,4 @@ test_periodic_boundary: test_periodic_boundary.cpp $(INC_DIR)/Cell.h $(INC_DIR)/
 test_csv: test_csv.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
 	$(CPP) $(CPPFLAGS) test_csv.cpp -o $(BIN_DIR)/test_csv -I$(INC_DIR)
 
-test_cell: test_cell.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
-	$(CPP) $(CPPFLAGS) test_cell.cpp -o $(BIN_DIR)/test_cell -I$(INC_DIR) -L$(LIB_DIR) -lmyrandom
-
-test_traffic: test_traffic.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
-	$(CPP) $(CPPFLAGS) test_traffic.cpp -o $(BIN_DIR)/test_traffic -I$(INC_DIR) -L$(LIB_DIR) -lmyrandom
-
 make all: $(ALLTESTS)

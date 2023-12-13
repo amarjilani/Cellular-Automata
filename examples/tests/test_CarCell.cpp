@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "CarCell.h"
 #include "CellularAutomata.h"
 
 int main() {
@@ -49,7 +50,7 @@ int main() {
   cellPtr->update();
   ca1.print();
 
-  cellPtr -> update();
+  cellPtr->update();
   ca1.print();
   try {
     cellPtr->flatCountDecrement();
