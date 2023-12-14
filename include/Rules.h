@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <algorithm>
 #include "CellularAutomata.h"
 
 /**
@@ -8,11 +9,11 @@
  *
  * @tparam T Type of the state
  * @param[CA type] ca CellularAutomata to modify
- * @param radius the size of the neighborhood
  * @param [state type] states to exclude from update
+ * @param radius the size of the neighborhood
  */
 template <typename T>
-void majorityRuleVN(CA<Cell<T>>& ca, int radius=1, std::vector<T> exclude={}) {
+void majorityRuleVN(CA<Cell<T>>& ca, std::vector<T> exclude={}, int radius=1) {
 
   std::unordered_map<T, int> state_counts;
 
@@ -23,7 +24,6 @@ void majorityRuleVN(CA<Cell<T>>& ca, int radius=1, std::vector<T> exclude={}) {
 
       // Dont touch anything in the exclude list
       if (std::find(exclude.begin(), exclude.end(), current_state) == exclude.end()) {
-        cell->setNextState(cell->getState());
         continue;
       }
 
@@ -52,11 +52,11 @@ void majorityRuleVN(CA<Cell<T>>& ca, int radius=1, std::vector<T> exclude={}) {
  *
  * @tparam T Type of the state
  * @param[CA type] ca CellularAutomata to modify
- * @param radius the size of the neighborhood
  * @param [state type] states to exclude from update
+ * @param radius the size of the neighborhood
  */
 template <typename T>
-void majorityRuleMoore(CA<Cell<T>>& ca, int radius=1, std::vector<T> exclude={}) {
+void majorityRuleMoore(CA<Cell<T>>& ca, std::vector<T> exclude={}, int radius=1) {
   std::unordered_map<T, int> state_counts;
 
   for (int row = 0; row < ca.getRows(); row++) {
@@ -66,7 +66,6 @@ void majorityRuleMoore(CA<Cell<T>>& ca, int radius=1, std::vector<T> exclude={})
 
       // Dont touch anything in the exclude list
       if (std::find(exclude.begin(), exclude.end(), current_state) == exclude.end()) {
-        cell->setNextState(cell->getState());
         continue;
       }
 
@@ -104,11 +103,10 @@ void conditionalTransitionRule(CA<Cell<T>>& ca, T start_state, T end_state) {
   for (int row = 0; row < ca.getRows(); row++) {
     for (int col = 0; col < ca.getCols(); col++) {
       auto cell = ca.getCell(row, col);
+      T current_state = cell->getState();
 
-      if (cell->getState() == start_state) {
+      if (current_state == start_state) {
         cell->setNextState(end_state);
-      } else {
-        cell->setNextState(cell->getState());
       }
     }
   }
@@ -142,9 +140,10 @@ void conditionalTransitionRule(CA<Cell<T>>& ca, std::unordered_map<T, T> transfo
  * @param[state type] trigger_state state to trigger the change
  * @param[state type] new_state the new state at T+1
  * @param [state type] states to exclude from update
+ * @param radius the size of the neighborhood
  */
 template <typename T>
-void conditionalTransitionRuleVN(CA<Cell<T>>& ca, T trigger_state, T new_state, std::vector<T> exclude={}) {
+void conditionalTransitionRuleVN(CA<Cell<T>>& ca, T trigger_state, T new_state, std::vector<T> exclude={}, int radius=1) {
   for (int row = 0; row < ca.getRows(); row++) {
     for (int col = 0; col < ca.getCols(); col++) {
       auto cell = ca.getCell(row, col);
@@ -152,23 +151,15 @@ void conditionalTransitionRuleVN(CA<Cell<T>>& ca, T trigger_state, T new_state, 
 
       // Dont touch anything in the exclude list
       if (std::find(exclude.begin(), exclude.end(), current_state) == exclude.end()) {
-        cell->setNextState(cell->getState());
         continue;
       }
 
-
-      bool updated = false;
-      auto neighbors = ca.getVNNeighborhood(row, col);
+      auto neighbors = ca.getVNNeighborhood(row, col, radius);
       for (auto n : neighbors) {
         if (n->getState() == trigger_state) {
           cell->setNextState(new_state);
-          updated = true;
           break;
         }
-      }
-
-      if (!updated) {
-        cell->setNextState(cell->getState());
       }
     }
   }
@@ -183,33 +174,26 @@ void conditionalTransitionRuleVN(CA<Cell<T>>& ca, T trigger_state, T new_state, 
  * @param[state type] trigger_state state to trigger the change
  * @param[state type] new_state the new state at T+1
  * @param [state type] states to exclude from update
+ * @param radius the size of the neighborhood
  */
 template <typename T>
-void conditionalTransitionRuleMoore(CA<Cell<T>>& ca, T trigger_state, T new_state, std::vector<T> exclude={}) {
+void conditionalTransitionRuleMoore(CA<Cell<T>>& ca, T trigger_state, T new_state, std::vector<T> exclude={}, int radius=1) {
   for (int row = 0; row < ca.getRows(); row++) {
     for (int col = 0; col < ca.getCols(); col++) {
       auto cell = ca.getCell(row, col);
       T current_state = cell->getState();
 
       // Dont touch anything in the exclude list
-      if (std::find(exclude.begin(), exclude.end(), current_state) == exclude.end()) {
-        cell->setNextState(cell->getState());
+      if (std::find(exclude.begin(), exclude.end(), current_state) != exclude.end()) {
         continue;
       }
 
-
-      bool updated = false;
-      auto neighbors = ca.getMooreNeighborhood(row, col);
+      auto neighbors = ca.getMooreNeighborhood(row, col, radius);
       for (auto n : neighbors) {
         if (n->getState() == trigger_state) {
           cell->setNextState(new_state);
-          updated = true;
           break;
         }
-      }
-
-      if (!updated) {
-        cell->setNextState(cell->getState());
       }
     }
   }

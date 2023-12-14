@@ -18,16 +18,21 @@ class Cell {
   StateType next_state_;
 
  public:
-  void setVoidState() {}
-  void setDefaultState() {}
+  void setVoidState() {next_state_ = -1;}
+  void setDefaultState() {next_state_ = -1;}
 
   Cell() { setVoidState(); }
-  Cell(StateType initial_state) : current_state_(initial_state) {}
+  Cell(StateType initial_state) : current_state_(initial_state) , next_state_(-1) {}
 
   // State interface
   StateType getState() { return current_state_; }
 
   void setState(StateType new_state) { current_state_ = new_state; }
   void setNextState(StateType next_state) { next_state_ = next_state; }
-  void update() { current_state_ = next_state_; }
+  void update() { 
+    if (next_state_ != -1) {
+      current_state_ = next_state_;
+    } 
+    next_state_ = -1;
+  }
 };
