@@ -84,11 +84,25 @@ class CA {
   // cell and changes it to its "default" initialization state
   // with a given probability probd
   void randomInit(double prob) {
-    for (int y = 0; y < y_size_; y++) {
-      for (int x = 0; x < x_size_; x++) {
+    for (int row = 0; row < y_size_; row++) {
+      for (int col = 0; col < x_size_; col++) {
         double rand = random_double(0, 1);
         if (rand < prob) {
-          getCell(y, x)->setDefaultState();
+          getCell(row, col)->setDefaultState();
+        }
+      }
+    }
+  }
+
+  template <typename T>
+  void randomInit(T state, double prob) {
+    for (int row = 0; row < y_size_; row++) {
+      for (int col = 0; col < x_size_; col++) {
+        double rand = random_double(0, 1);
+        if (rand < prob) {
+          auto cell = getCell(row, col);
+          cell->setNextState(state);
+          cell->update();
         }
       }
     }
