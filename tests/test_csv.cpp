@@ -38,6 +38,9 @@ int main() {
   Boundary boundary_type = none;
 
   MyCA ca(10, 10, boundary_type);
+  auto cell = ca.getCell(4, 4);
+  cell -> setNextState(1);
+  cell -> update();
 
   // enables writing to output 
   ca.enableCSV("test.csv"); 
