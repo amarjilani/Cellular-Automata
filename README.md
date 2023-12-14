@@ -58,7 +58,7 @@ forest.print()
 Or, we can set up more sophisticated io by providing a file path to write to with `void CA::enableCSV(std::string)`. This will write each iteration of the CA to the specified file:
 
 ```
-forest.enableCSV("forest_fire_test.csv"); 
+forest.enableCSV("test_forest_fire.csv"); 
 ```
 
 This can be turned off with: 
@@ -71,6 +71,8 @@ Now to add our rules! Our library uses a passed in update function to allow the 
 Let's set up our rules for the forest fire. First, we can to specify that any tree that is on fire (1) at time T will be charred (2) at time T+1. We also want to specify that any normal tree whose Moore neighbor is on fire at time T should also be on fire at time T+1. But, we don't want charred trees to turn back on fire. 
 
 ```
+#include "Rules.h"
+
 void forestFireUpdate(CA<Cell<int>>& forest) {
 
     // Set on-fire trees to be charred
@@ -109,6 +111,7 @@ The program in its entirety is as follows:
 
 ```
 #include "CellularAutomata.h"
+#include "Rules.h"
 
 void forestFireUpdate(CA<Cell<int>>& forest) {
 
@@ -125,7 +128,7 @@ int main() {
   CA<Cell<int>> forest(100, 100, walled);
   forest.randomInit(1, 0.2);
 
-  forest.enableCSV("forest_fire_test.csv"); 
+  forest.enableCSV("test_forest_fire.csv"); 
 
 
   forest.run(10, forestFireUpdate);
@@ -134,6 +137,20 @@ int main() {
 }
 
 ```
+
+Now, to compile the program we must specify the proper include directories for the `CellularAutomata.h`, `Cell.h`, and the libmyrandom library. If this program is located at `examples/tests/test_forest_fire.cpp`, then we would compile with the following:
+
+`g++ -std=c++11 -O3 test_forest_fire.cpp -e ../bin/test_forest_fire -I../../include -I../include -L../../lib -lmyrandom`
+
+Running the program with yields the `test_forest_fire.csv`. Now, we can visualize the results!
+
+** PUT INFORMATION ON VISUALIZATION **
+
+
+## Brief API reference
+
+
+## Our Traffic Application
 
 
 
