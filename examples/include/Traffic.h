@@ -218,8 +218,13 @@ void trafficUpdateChangeLanesPlusSpeed(CA<CarCell>& ca) {
 
           // Increase the speed with each successful
           // iteration moving forward
-          DEBUG_MSG("Increasing speed to " << cell->velocity() + 1);
-          next_cell->next_velocity() = cell->velocity() + 1;
+          // until max speed of 3
+          if (cell->velocity() < 5) {
+              DEBUG_MSG("Increasing speed to " << cell->velocity() + 1);
+              next_cell->next_velocity() = cell->velocity() + 1;
+          } else {
+            next_cell->next_velocity() = cell->velocity();
+          }
 
           cell->setNextVoidState();
         }
@@ -231,13 +236,13 @@ void trafficUpdateChangeLanesPlusSpeed(CA<CarCell>& ca) {
               "Wont move forward this iteration, but setting velocity "
               "back to normal for next");
           cell->setNextDefaultState();
-        } else if (!cell->flat() && ca.getRelativeCell(row, col, 1, 0)->road()){
+        } else if (!cell->flat() && row < ca.getRows()-1 && ca.getRelativeCell(row, col, 1, 0)->road()){
           DEBUG_MSG("Car in front, but lane below is free!");
           auto next_cell = ca.getRelativeCell(row, col, 1, 0);
           next_cell->setNextDefaultState();
 
           cell->setNextVoidState();
-        } else if (!cell->flat() && ca.getRelativeCell(row, col, -1, 0)->road()){
+        } else if (!cell->flat() && row > 0 && ca.getRelativeCell(row, col, -1, 0)->road()){
           DEBUG_MSG("Car in front, but lane above is free!");
           auto next_cell = ca.getRelativeCell(row, col, -1, 0);
           next_cell->setNextDefaultState();
