@@ -36,6 +36,9 @@ test_traffic: test_traffic.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h $
 test_traffic_change_lanes: test_traffic_change_lanes.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h $(EX_INC_DIR)/CarCell.h $(EX_INC_DIR)/Traffic.h
 	$(CPP) $(CPPFLAGS) test_traffic_change_lanes.cpp -o $(EX_BIN_DIR)/test_traffic_change_lanes -I$(INC_DIR) -I$(EX_INC_DIR) -L$(LIB_DIR) -lmyrandom
 
+test_traffic_change_lanes_speed: test_traffic_change_lanes_speed.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h $(EX_INC_DIR)/CarCell.h $(EX_INC_DIR)/Traffic.h
+	$(CPP) $(CPPFLAGS) test_traffic_change_lanes_speed.cpp -o $(EX_BIN_DIR)/test_traffic_change_lanes_speed -I$(INC_DIR) -I$(EX_INC_DIR) -L$(LIB_DIR) -lmyrandom
+
 test_forest_fire: test_forest_fire.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
 	$(CPP) $(CPPFLAGS) test_forest_fire.cpp -o $(EX_BIN_DIR)/test_forest_fire -I$(INC_DIR) -I$(EX_INC_DIR) -L$(LIB_DIR) -lmyrandom
 

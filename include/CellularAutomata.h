@@ -243,6 +243,11 @@ class CA {
 
   void run(const int iterations,
            const std::function<void(CA<CellType>&)> update_func) {
+
+      // write initial state
+      if (csv_output_)
+        writeToCSV();
+
     // For i iterations
     for (int i = 0; i < iterations; i++) {
       // Call our update_func_
