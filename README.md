@@ -24,7 +24,7 @@ In this example we will have a grid of trees, each tree can either be 'normal' (
 
 First, let's create a `CA` with a grid of 100 rows x 100 columns. `CA(int rows, int cols, Boundary boundary)`. Here, since we only need a single state, we can use the base `Cell` class. We have a choice of what boundary to use. For our forest, we will make it walled, which just means the grid 'ends' at the edges:
 
-```
+``` c++
 #include "CellularAutomata.h"
 
 CA<Cell<int>> forest(100, 100, walled);
@@ -35,7 +35,7 @@ Now we need to specify what the initial state of the trees. There's a few ways w
 
 We can manually specify a particular cell at `row`, `col` and explicitly set its next state (then call update to push the change to the current_state).
 
-```
+``` c++
 forest.getCell(20, 20)->setNextState(1)
 forest.getCell(1, 15)->setNextState(1)
 forest.updateAll();
@@ -43,13 +43,13 @@ forest.updateAll();
 
 Or, we can specify a state to randomly populate based on some probability with the `void CA::randomInit(T state, double prob)` method. You can either specify a state directly, or if you have created your own cell type, you can specify a `setVoidState` and `setDefaultState`, which can perform more complex actions to set up a cell's state. Here, we specify a 20% chance of making each cell on fire.
 
-```
+``` c++
 forest.randomInit(1, 0.2);
 ```
 
 Now, we may want to see the state of the automata at the start. There are a few options. First, you can do a simple print to the console with the `void CA::print()` method.
 
-```
+``` c++
 forest.print()
 ```
 
@@ -57,12 +57,12 @@ forest.print()
 
 Or, we can set up more sophisticated io by providing a file path to write to with `void CA::enableCSV(std::string)`. This will write each iteration of the CA to the specified file:
 
-```
+``` c++
 forest.enableCSV("test_forest_fire.csv"); 
 ```
 
 This can be turned off with: 
-```
+``` c++
 forest.disableCSV();
 ```
 
@@ -70,7 +70,7 @@ Now to add our rules! Our library uses a passed in update function to allow the 
 
 Let's set up our rules for the forest fire. First, we can to specify that any tree that is on fire (1) at time T will be charred (2) at time T+1. We also want to specify that any normal tree whose Moore neighbor is on fire at time T should also be on fire at time T+1. But, we don't want charred trees to turn back on fire. 
 
-```
+``` c++
 #include "Rules.h"
 
 void forestFireUpdate(CA<Cell<int>>& forest) {
@@ -86,7 +86,7 @@ void forestFireUpdate(CA<Cell<int>>& forest) {
 
 First, we apply the `void conditionalTransitionRule(CA<Cell<T>>& ca, T start_state, T end_state)` transforms any trees that are on fire to charred. We could alternatively give a map of states as shown below:
 
-```
+``` c++
 // Could alternatively set a mapping if there are multiple states to update
 
 std::unordered_map<int, int> state_map;
@@ -109,7 +109,7 @@ forest.run(10, forestFireUpdate);
 
 The program in its entirety is as follows:
 
-```
+``` c++
 #include "CellularAutomata.h"
 #include "Rules.h"
 
@@ -150,7 +150,69 @@ Running the program with yields the `test_forest_fire.csv`. Now, we can visualiz
 ## Brief API reference
 
 
-## Our Traffic Application
+## Our Traffic application and custom update functions
+
+We developed a traffic simulation application by building a complex set of update rules. Each cell in the cellular automata is either an emtpy section of road, or occupied by a car. The cars can either be moving, or occasionally will get a flat tire that stops it for 10 iterations, causing a slowdown. 
+
+In each time step, each car moves forward based on its current velocity. But, if there is a car in front of it, it either must slow down to match that cars speed, or if the car has a flat tire, switch lanes to go around it. The end product is shown below!
+
+![Traffic simulation](images/traffic_simulation.gif)
+
+### How the traffic simulation works
+
+The code for this simulation can be found in the `examples` directory. First, there is a custom `CarCell` (`examples/include/CarCell.h`) class that inherits from the basic `Cell` class and defines the logic for a car's state. This class manages making flat tires, storing the velocity, and whether the cell is actually a car, or just empty road. 
+
+Then, we defined custom update logic in `examples/include/Traffic.h`. We define three functions with increasing complexity:
+  1. `trafficUpdate`: simple update function where cars only have a single speed and cannot switch lanes
+  2. `trafficUpdateChangeLanes`: slightly modified so that cars can switch lanes to get around a stopped car in front
+  3. `trafficUpdateChangeLanesPlusSpeed`: the most complex function where the longer cars drive uninterrupted, their speed increases until hitting a max speed.
+
+These functions make use of our library's provided `CA` attributes to get, set, and manipulate the cells. Namely, it uses the 
+
+``` c++
+std::shared_ptr<CellType> CA::getRelativeCell(const int row,
+                                            const int col,
+                                            const int Drow,
+                                            const int Dcol)
+```
+
+function to get the cell relative to another cell. This is used to check if the road in front is empty, for example. We also use two generic functions that are provided for the base cell, but are overridden to have specific logic for the `CarCell`: `setDefaultState` and `setVoidState`. These functions can be used to wrap setting multiple attributes of the cell at once. Here, setting to the 'void' state turns the cell into an empty stretch of road, and to 'default' gives a car with velocity of 1. 
+
+The functionalities provided by our library made implementing the traffic rules very easy! The hardest part was coming up with cohesive rules that covered the scenarios we wanted, from there the updating of states and ability to get relative cells made the code easy to write.
+
+
+### Runnng a simulation
+
+We provide a command line interface for running a traffic simulation in `examples/application/traffic_simulation.cpp`, which can be compiled with the `examples/application/Makefile` to produce the binary at `examples/bin/traffic_simulation`. Running the program allows the user to specify the grid size, probability of a car at each cell, output file, and number of iterations:
+
+```console
+(msse) [cjpeh bin]$ ./traffic_simulation
+Number of rows:10
+Number of columns:100
+Probability of cell being a car:0.01
+Output file:traffic_simulation.csv
+Iterations to run:100
+```
+Then, we can create a nice traffic image with `python ../../src/Visualization/ca_plot.py traffic_simulation.csv traffic_simulation_plots --gif True --height 5 --width 15 --colors "{0:'grey',1:'red',2:'green',3:'yellow'}"`!
+
+### Experimenting with different frequency of flat tires
+
+From the above simulation, we can see that as flat tires occur, it slows down cars and causes them to bunch up. To further investigate this, we ran the simulation with increasing probability of flat tires:
+
+
+1/1,000,000 odds:
+![very low chance of flats](images/ver_low_odds.gif)
+
+1/1,000 odds:
+![1 in 1,000 flats](images/1_1000.gif)
+
+1/100 odds:
+![1 in 100 flats](images/1_100.gif)
+
+1/10 odds:
+![1 in 10 flats](images/1_10.gif)
+
+
 
 
 
