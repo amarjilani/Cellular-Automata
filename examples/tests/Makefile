@@ -23,7 +23,7 @@ LIB_DIR = ../../lib
 
 ###################################################################################
 
-ALLTESTS = test_CarCell test_traffic
+ALLTESTS = test_CarCell test_traffic test_traffic_change_lanes test_traffic_change_lanes_speed test_forest_fire
 
 ###################################################################################
 
