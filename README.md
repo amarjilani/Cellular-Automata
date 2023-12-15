@@ -201,7 +201,7 @@ From the above simulation, we can see that as flat tires occur, it slows down ca
 
 
 1/1,000,000 odds:
-![very low chance of flats](images/ver_low_odds.gif)
+![very low chance of flats](images/very_low_odds.gif)
 
 1/1,000 odds:
 ![1 in 1,000 flats](images/1_1000.gif)
