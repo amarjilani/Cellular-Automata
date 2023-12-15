@@ -144,8 +144,11 @@ Now, to compile the program we must specify the proper include directories for t
 
 Running the program with yields the `test_forest_fire.csv`. Now, we can visualize the results!
 
-** PUT INFORMATION ON VISUALIZATION **
-
+The visualization utility was implemented in Python and makes use of the matplotlib and imageio libraries to create informative visual representations of the CA simulation. It works by creating a plot of the grid for each time step and saving the images to a specified directory. The optional `--gif` argument allows users to seamlessly generate animated GIFs of the plots. The Python script can be run from the command line like so:
+```bash
+python ca_plot.py test_forest_fire.csv forest --colors "{0:'darkgreen', 1:'orange',2:'brown'}" --gif True
+```
+![Forest fire simulation](images/fire.gif)
 
 
 ## Our Traffic application and custom update functions
