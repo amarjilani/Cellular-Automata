@@ -83,7 +83,7 @@ def generate_plots(csv_file, output_dir, colors, plot_width, plot_height):
     for i, grid in enumerate(parsed_data):
         plt.figure(figsize=(w, h))
         plt.pcolormesh(grid, cmap=cmap, vmin=min_value, vmax=max_value)
-        plt.title(f'Timestep {i + 1} - Dimensions: {dimensions[0]}x{dimensions[1]}')
+        plt.title(f'Timestep {i} - Dimensions: {dimensions[0]}x{dimensions[1]}')
         plt.colorbar(label='Cell State')
 
         plt.xlim(0, dimensions[0])  
