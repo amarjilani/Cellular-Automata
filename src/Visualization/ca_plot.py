@@ -5,7 +5,7 @@ from matplotlib.colors import ListedColormap
 import argparse
 import os
 import ast
-import imageio
+import imageio.v2 as imageio
 import re
 
 def generate_plots(csv_file, output_dir, colors, plot_width, plot_height):
