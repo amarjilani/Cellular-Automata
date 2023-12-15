@@ -23,11 +23,14 @@ LIB_DIR = ../../lib
 
 ###################################################################################
 
-ALLAPPS = traffic_simulation
+ALLAPPS = traffic_simulation compare_flat_rates
 
 ###################################################################################
 
 traffic_simulation: traffic_simulation.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h $(EX_INC_DIR)/CarCell.h $(EX_INC_DIR)/Traffic.h
 	$(CPP) $(CPPFLAGS) traffic_simulation.cpp -o $(EX_BIN_DIR)/traffic_simulation -I$(INC_DIR) -I$(EX_INC_DIR) -L$(LIB_DIR) -lmyrandom
+
+compare_flat_rates: compare_flat_rates.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h $(EX_INC_DIR)/CarCell.h $(EX_INC_DIR)/Traffic.h
+	$(CPP) $(CPPFLAGS) compare_flat_rates.cpp -o $(EX_BIN_DIR)/compare_flat_rates -I$(INC_DIR) -I$(EX_INC_DIR) -L$(LIB_DIR) -lmyrandom
 
 make all: $(ALLAPPS)

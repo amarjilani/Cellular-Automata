@@ -77,9 +77,8 @@ class CarCell : public Cell<int> {
    * is always defaulted to be 0: road cell
    */
   void update() {
-
     if (next_state_ != -1) {
-    current_state_ = next_state_;
+      current_state_ = next_state_;
     }
 
     velocity_ = next_velocity_;
@@ -104,7 +103,7 @@ class CarCell : public Cell<int> {
 
     next_state_ = 3;
     next_velocity_ = 0;
-    next_flatCount_ = 3;
+    next_flatCount_ = 10;
   }
 
   /**
