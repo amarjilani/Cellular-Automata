@@ -147,8 +147,6 @@ Running the program with yields the `test_forest_fire.csv`. Now, we can visualiz
 ** PUT INFORMATION ON VISUALIZATION **
 
 
-## Brief API reference
-
 
 ## Our Traffic application and custom update functions
 
