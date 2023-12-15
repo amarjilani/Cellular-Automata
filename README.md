@@ -227,7 +227,7 @@ We see that as the number of stops and lane changes (which cause the car's speed
 | 1 / 50 | 7.7 |
 | 1/ 10 | 4.9 |
 
-Obviously increasing the odds of a flat tire makes the cars move through the simulation slower. But, it is dramatic how much the affect is on other cars around it in addition to just the cars that themselves have flat tires. 
+Obviously increasing the odds of a flat tire makes the cars move through the simulation slower. But, it is dramatic how much the affect is on other cars around it in addition to just the cars that themselves have flat tires. In the 1/10 odds case we even see a point where one car gets stuck behind a car with a flat tire but can't change lanes to get around the blockage because there is another flat tire below it!
 
 
 We include this code at `examples/application/compare_flat_rates.cpp` with the corresponding Makefile target `compare_flat_rates`, and a plotting utility once the program is compiled at `examples/bin/Makefile`s target `compare_flat_rates_plot`.
