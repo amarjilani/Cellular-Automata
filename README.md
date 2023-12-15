@@ -215,9 +215,6 @@ From the above simulation, we can see that as flat tires occur, it slows down ca
 1/10 odds:
 ![1 in 10 flats](images/1_10.gif)
 
-1/3 odds:
-![1 in 3 flats](images/1_3.gif)
-
 To quantify this affect, we measured the average speed of *moving* cars for each of these simulations. We exclude the speed of cars with flat tires since we are trying to quantify the affect of the flat tires on the other cars!
 
 We see that as the number of stops and lane changes (which cause the car's speed to reset to 1) increases, the average speed of the moving cars decreases!
@@ -229,9 +226,8 @@ We see that as the number of stops and lane changes (which cause the car's speed
 | 1 / 100 | 8.9 | 
 | 1 / 50 | 7.7 |
 | 1/ 10 | 4.9 |
-| 1 / 3 | 2. 6 | 
 
-
+Obviously increasing the odds of a flat tire makes the cars move through the simulation slower. But, it is dramatic how much the affect is on other cars around it in addition to just the cars that themselves have flat tires. 
 
 
 
