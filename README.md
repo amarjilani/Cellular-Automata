@@ -257,6 +257,8 @@ In each time step, each car moves forward based on its current velocity. But, if
 
 ![Traffic simulation](images/traffic_simulation.gif)
 
+We thought this would be a very interesting application of cellular automata modelling that could be very relevant to understanding why traffic forms on open roads, how to build effective road infrastructure etc. We primarily focus on the phenomenon of traffic slowdowns where cars bunch up as the result of a single car's slow down, or flat tire in this case. But, we envisioned some more sophistiticated applications where you could build cross-walks, high-speed lanes, traffic lights, and other road infrastructure and evaluate how they affect the flow of cars!
+
 ### How the traffic simulation works
 
 The code for this simulation can be found in the `examples` directory. First, there is a custom `CarCell` (`examples/include/CarCell.h`) class that inherits from the basic `Cell` class and defines the logic for a car's state. This class manages making flat tires, storing the velocity, and whether the cell is actually a car, or just empty road. 
