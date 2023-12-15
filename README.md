@@ -197,11 +197,11 @@ Then, we can create a nice traffic image with `python ../../src/Visualization/ca
 
 ### Experimenting with different frequency of flat tires
 
-From the above simulation, we can see that as flat tires occur, it slows down cars and causes them to bunch up. To further investigate this, we ran the simulation with increasing probability of flat tires:
+From the above simulation, we can see that as flat tires occur, it slows down cars and causes them to bunch up, causing their speeds to drop. To further investigate this, we ran the simulation with increasing probability of flat tires with an initial state that has the cars purposefully spaced out:
 
 
 1/1,000,000 odds:
-![very low chance of flats](images/very_low_odds.gif)
+![very low chance of flats](images/1_mil.gif)
 
 1/1,000 odds:
 ![1 in 1,000 flats](images/1_1000.gif)
@@ -209,8 +209,30 @@ From the above simulation, we can see that as flat tires occur, it slows down ca
 1/100 odds:
 ![1 in 100 flats](images/1_100.gif)
 
+1/50 odds:
+![1 in 50 flats](images/1_50.gif)
+
 1/10 odds:
 ![1 in 10 flats](images/1_10.gif)
+
+1/3 odds:
+![1 in 3 flats](images/1_3.gif)
+
+To quantify this affect, we measured the average speed of *moving* cars for each of these simulations. We exclude the speed of cars with flat tires since we are trying to quantify the affect of the flat tires on the other cars!
+
+We see that as the number of stops and lane changes (which cause the car's speed to reset to 1) increases, the average speed of the moving cars decreases!
+
+| Odds of a flat | Average speed of moving cars |
+| -------------- | ---------------------------- |
+| 1 / 1,000,000 | 9.55 |
+| 1 / 1,000 | 9.55 | 
+| 1 / 100 | 8.9 | 
+| 1 / 50 | 7.7 |
+| 1/ 10 | 4.9 |
+| 1 / 3 | 2. 6 | 
+
+
+
 
 
 
