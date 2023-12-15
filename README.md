@@ -11,11 +11,6 @@ The `CA` class handles all the operations of the cellular automata grid. It stor
 
 Most importantly, the `CA` class has a `run` method which takes in a function that is used to update the cells in the grid based on specified rules. We have a pre-defined set of rules that can be used, individually or in successsion with eachother, or the user can provide their own custom update logic. 
 
-## Directories
-
-*going to leave this til later in case we decide we want to un-template and move to ints*
-
-
 ## Quickstart
 
 Here we use a simple forest fire example to demonstrate the functionalities and use of the library. Later, we will extend this to a more sophisticated traffic example that we believe truly showcases the power of our library.
@@ -53,7 +48,26 @@ Now, we may want to see the state of the automata at the start. There are a few 
 forest.print()
 ```
 
-> PUT ouTPUT HERE
+> 1    0    0    0    0    0    1    0    1    1    0    0    0    0    0    0    1    0    0    0\
+> 0    0    1    0    0    0    0    1    0    1    0    0    0    1    1    0    0    0    1    0\
+> 1    0    0    0    0    0    0    0    0    0    0    1    0    1    0    0    0    0    0    1\
+> 0    0    0    0    0    0    0    0    1    0    0    1    0    0    0    0    1    0    0    0\
+> 0    0    0    1    0    0    1    0    1    0    0    0    0    0    0    0    0    0    0    0\
+> 0    0    0    0    0    0    0    0    0    1    0    1    0    0    0    0    1    0    0    0\
+> 0    0    0    1    0    1    0    0    0    0    0    1    0    0    0    0    0    0    0    0\
+> 1    0    0    0    1    1    0    1    0    0    0    0    0    0    1    0    0    0    1    0\
+> 0    0    0    0    0    0    0    0    1    0    0    0    0    0    0    0    0    1    0    0\
+> 1    0    0    0    0    0    1    0    0    0    0    0    1    1    0    0    1    0    0    0\
+> 0    0    0    0    0    1    0    1    1    0    0    0    1    0    0    0    0    1    1    0\
+> 0    0    1    1    0    1    0    0    0    0    0    0    0    0    0    0    1    0    0    0\
+> 0    1    0    0    0    0    0    1    0    0    0    0    1    1    0    0    0    1    0    1\
+> 0    1    0    0    0    1    0    0    1    1    1    0    0    0    0    0    0    0    0    0\
+> 0    0    0    0    0    0    0    0    0    1    0    1    1    0    0    0    0    0    0    0\
+> 1    0    0    0    1    0    0    0    0    0    0    1    1    0    0    0    0    0    0    1\
+> 0    0    0    0    0    1    0    1    1    0    0    0    1    0    1    0    0    1    0    1\
+> 0    0    0    0    0    1    0    0    0    0    0    0    0    0    1    0    1    1    0    0\
+> 0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    1    0\
+> 1    1    0    0    0    0    0    0    0    0    1    1    0    0    0    1    0    0    1    1
 
 Or, we can set up more sophisticated io by providing a file path to write to with `void CA::enableCSV(std::string)`. This will write each iteration of the CA to the specified file:
 
@@ -106,6 +120,76 @@ Now that we have set up our CA and our update logic, its time to run the model! 
 ```
 forest.run(10, forestFireUpdate);
 ```
+This will run 10 iterations, saving the state of each iteration to file. But, you can also add additional information printed between each iteration as well!
+
+For example, you can query how many cells have a particular state and report out. Here, run one iteration at a time, and use the `int CA::getStateCount(T state)` method to show how many trees are in each state:
+
+``` c++
+  for (int i = 0; i < 10; i++) {
+    forest.run(1, forestFireUpdate);
+    std::cout << "Time step #" << i + 1 << ": " << std::endl;
+    std::cout << "# of trees not on fire: " << forest.getStateCount(0)
+              << std::endl;
+    std::cout << "# of trees on fire: " << forest.getStateCount(1) << std::endl;
+    std::cout << "# of charred trees: " << forest.getStateCount(2) << std::endl
+              << std::endl;
+  }
+```
+
+> Time step #0:\
+> \# of trees not on fire: 394\
+> \# of trees on fire: 6\
+> \# of charred trees: 0\
+>\
+> Time step #1:\
+> \# of trees not on fire: 353\
+> \# of trees on fire: 41\
+> \# of charred trees: 6\
+> \
+> Time step #2:\
+> \# of trees not on fire: 281\
+> \# of trees on fire: 72\
+> \# of charred trees: 47\
+>\
+> Time step #3:\
+> \# of trees not on fire: 203\
+> \# of trees on fire: 78\
+> \# of charred trees: 119\
+> \
+> Time step #4:\
+> \# of trees not on fire: 136\
+> \# of trees on fire: 67\
+> \# of charred trees: 197\
+>\
+> Time step #5:\
+> \# of trees not on fire: 79\
+> \# of trees on fire: 57\
+> \# of charred trees: 264\
+> \
+> Time step #6:\
+> \# of trees not on fire: 48\
+> \# of trees on fire: 31\
+> \# of charred trees: 321\
+> \
+> Time step #7:\
+> \# of trees not on fire: 26\
+> \# of trees on fire: 22\
+> \# of charred trees: 352\
+>\
+> Time step #8:\
+> \# of trees not on fire: 10\
+> \# of trees on fire: 16\
+> \# of charred trees: 374\
+> \
+> Time step #9:\
+> \# of trees not on fire: 0\
+> \# of trees on fire: 10\
+> \# of charred trees: 390\
+> \
+> Time step #10:\
+> \# of trees not on fire: 0\
+> \# of trees on fire: 0\
+> \# of charred trees: 400
 
 The program in its entirety is as follows:
 
@@ -114,26 +198,40 @@ The program in its entirety is as follows:
 #include "Rules.h"
 
 void forestFireUpdate(CA<Cell<int>>& forest) {
+  // Set on-fire trees to be charred
+  conditionalTransitionRule(forest, 1, 2);
 
-    // Set on-fire trees to be charred
-    conditionalTransitionRule(forest, 1, 2);
+  // Spread the fire based on Moore neighborhood
+  // specify to exclude state 2
+  conditionalTransitionRuleMoore(forest, 1, 1, {1, 2});
+}
 
-    // Now, spread the fire based on Moore neighborhood
-    // specify to exclude state 2
-    conditionalRuleMoore(forest, 1, 1, {2});
+void reportStateCounts(CA<Cell<int>>& ca, int iteration) {
+  std::cout << "Time step #" << iteration << ": " << std::endl;
+  std::cout << "# of trees not on fire: " << ca.getStateCount(0) << std::endl;
+  std::cout << "# of trees on fire: " << ca.getStateCount(1) << std::endl;
+  std::cout << "# of charred trees: " << ca.getStateCount(2) << std::endl
+            << std::endl;
 }
 
 int main() {
-
+  // Initialize our forest model
   CA<Cell<int>> forest(100, 100, walled);
-  forest.randomInit(1, 0.2);
+  forest.randomInit(1, 0.01);
 
-  forest.enableCSV("test_forest_fire.csv"); 
+  // Enable full grid-state report to file
+  forest.enableCSV("test_forest_fire.csv");
 
+  // Report initial state
+  reportStateCounts(forest, 0);
 
-  forest.run(10, forestFireUpdate);
+  // Run iterations
+  for (int i = 1; i < 11; i++) {
+    forest.run(1, forestFireUpdate);
+    reportStateCounts(forest, i);
+  }
 
- return 0;
+  return 0;
 }
 
 ```
