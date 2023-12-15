@@ -269,6 +269,16 @@ class CA {
    *   Printing State
    *********************/
 
+  int getStateCount(int state) {
+    int count = 0; 
+    for (int y = 0; y < y_size_; y++) {
+      for (int x = 0; x < x_size_; x++) {
+        if (getCell(y, x)->getState() == state) count++; 
+      }
+    }
+    return count; 
+  }
+
   void print() const {
     for (int y = 0; y < y_size_; y++) {
       for (int x = 0; x < x_size_; x++) {
