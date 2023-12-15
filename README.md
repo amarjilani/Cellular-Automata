@@ -192,6 +192,7 @@ Output file:traffic_simulation.csv
 Iterations to run:100
 ```
 Then, we can create a nice traffic image with `python ../../src/Visualization/ca_plot.py traffic_simulation.csv traffic_simulation_plots --gif True --height 5 --width 15 --colors "{0:'grey',1:'red',2:'green',3:'yellow'}"`!
+We also provide a Makefile target in the `examples/bin/Makefile` called `traffic_simulation_plots` that will create the gif as well.
 
 ### Experimenting with different frequency of flat tires
 
@@ -213,6 +214,7 @@ From the above simulation, we can see that as flat tires occur, it slows down ca
 1/10 odds:
 ![1 in 10 flats](images/1_10.gif)
 
+
 To quantify this affect, we measured the average speed of *moving* cars for each of these simulations. We exclude the speed of cars with flat tires since we are trying to quantify the affect of the flat tires on the other cars!
 
 We see that as the number of stops and lane changes (which cause the car's speed to reset to 1) increases, the average speed of the moving cars decreases!
@@ -227,6 +229,8 @@ We see that as the number of stops and lane changes (which cause the car's speed
 
 Obviously increasing the odds of a flat tire makes the cars move through the simulation slower. But, it is dramatic how much the affect is on other cars around it in addition to just the cars that themselves have flat tires. 
 
+
+We include this code at `examples/application/compare_flat_rates.cpp` with the corresponding Makefile target `compare_flat_rates`, and a plotting utility once the program is compiled at `examples/bin/Makefile`s target `compare_flat_rates_plot`.
 
 
 
