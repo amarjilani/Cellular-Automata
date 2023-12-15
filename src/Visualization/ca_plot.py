@@ -23,6 +23,8 @@ def generate_plots(csv_file, output_dir, colors, plot_width, plot_height):
     """
 
     # handle optional arguments 
+    min_value = None
+    max_value = None
     if plot_width:
         w = plot_width
     else:
@@ -40,6 +42,10 @@ def generate_plots(csv_file, output_dir, colors, plot_width, plot_height):
             raise ValueError("Invalid format for colors. Please provide a dictionary with format {state:color}")
         color_list = [color_dict[i] for i in sorted(color_dict.keys())]
         cmap = ListedColormap(color_list)
+
+        # ensures that colors are correct, even if a state doesn't occur in the data! 
+        min_value = min(color_dict.keys())
+        max_value = max(color_dict.keys())
     else:
         cmap = "viridis"
 
@@ -61,15 +67,17 @@ def generate_plots(csv_file, output_dir, colors, plot_width, plot_height):
     for timestep in timesteps:
         rows = timestep.split('\n')
         if not dimensions:
-            dimensions = list(map(int, rows[0].split(',')))  
-        grid = [list(map(int, row.split(','))) for row in rows[1:]]
-        parsed_data.append(grid)
+            dimensions = list(map(int, rows[0].split(',')))
+        else:
+            grid = [list(map(int, row.split(','))) for row in rows]
+            parsed_data.append(grid)
 
-    # get min/max values for color scale, keeps it consistent throughout all timesteps 
-    flat_list = [item for sublist1 in parsed_data for sublist2 in sublist1 for item in sublist2]
+    if not min_value and not max_value:
+        # get min/max values for color scale, keeps it consistent throughout all timesteps 
+        flat_list = [item for sublist1 in parsed_data for sublist2 in sublist1 for item in sublist2]
 
-    min_value = min(flat_list)
-    max_value = max(flat_list)
+        min_value = min(flat_list)
+        max_value = max(flat_list)
 
     # plot each timestep and save to directory 
     for i, grid in enumerate(parsed_data):
@@ -77,6 +85,10 @@ def generate_plots(csv_file, output_dir, colors, plot_width, plot_height):
         plt.pcolormesh(grid, cmap=cmap, vmin=min_value, vmax=max_value)
         plt.title(f'Timestep {i + 1} - Dimensions: {dimensions[0]}x{dimensions[1]}')
         plt.colorbar(label='Cell State')
+
+        plt.xlim(0, dimensions[0])  
+        plt.ylim(0, dimensions[1])     
+
         plt.savefig(os.path.join(output_dir, f'timestep_{i}.png'))
         plt.close()
 
