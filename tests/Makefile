@@ -17,7 +17,7 @@ INC_DIR = ../include
 # The bin directory to put exes
 BIN_DIR = ../bin
 
-ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary test_csv test_cell test_traffic
+ALLTESTS = test_simple test_walled_boundary test_none_boundary test_periodic_boundary test_csv
 
 # The Lib directory 
 LIB_DIR = ../lib
@@ -41,3 +41,6 @@ test_csv: test_csv.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAutomata.h
 	$(CPP) $(CPPFLAGS) test_csv.cpp -o $(BIN_DIR)/test_csv -I$(INC_DIR)
 
 make all: $(ALLTESTS)
+
+cleanall:
+	cd ${BIN_DIR}; rm ${ALLTESTS}

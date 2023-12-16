@@ -34,3 +34,6 @@ compare_flat_rates: compare_flat_rates.cpp $(INC_DIR)/Cell.h $(INC_DIR)/Cellular
 	$(CPP) $(CPPFLAGS) compare_flat_rates.cpp -o $(EX_BIN_DIR)/compare_flat_rates -I$(INC_DIR) -I$(EX_INC_DIR) -L$(LIB_DIR) -lmyrandom
 
 make all: $(ALLAPPS)
+
+cleanall:
+	cd ${EX_BIN_DIR}; rm ${ALLAPPS}

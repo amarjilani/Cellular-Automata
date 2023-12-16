@@ -5,7 +5,7 @@
 #
 # Directory Path> 274B-Final/tests
 
-VIS_DIR = ../../src/Visualization
+VIS_DIR = ../../utils/Visualization/
 
 ###################################################################################
 

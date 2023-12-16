@@ -12,10 +12,6 @@ Contains source code for visualization and randomization.
 
 **Due to the use of templating in our general purpose CA library, all of the CA implementation is done within the header files in the /Include directory**
 
-## LIST OF SUBDIRECTORIES IN THIS DIRECTORY
-
-- Visualization/ - contains useful visualization scripts
-
 ## LIST OF FILES IN THIS DIRECTORY
 
 - README - this file
