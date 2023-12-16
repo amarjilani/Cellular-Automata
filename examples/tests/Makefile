@@ -43,3 +43,6 @@ test_forest_fire: test_forest_fire.cpp $(INC_DIR)/Cell.h $(INC_DIR)/CellularAuto
 	$(CPP) $(CPPFLAGS) test_forest_fire.cpp -o $(EX_BIN_DIR)/test_forest_fire -I$(INC_DIR) -I$(EX_INC_DIR) -L$(LIB_DIR) -lmyrandom
 
 make all: $(ALLTESTS)
+
+cleanall:
+	cd ${EX_BIN_DIR}; rm ${ALLTESTS}
